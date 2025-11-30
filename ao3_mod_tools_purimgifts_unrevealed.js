@@ -85,26 +85,25 @@
 	  var chapters = '="' + $meta.find("dd.chapters").first().text().trim() + '"';
 	
 	  // Summary: prefer the summary block inside #workskin, but keep all fallbacks
-	  var $summaryEl = $doc.find("#workskin .summary blockquote.userstuff")
-	    .first();
-	
-	  if (!$summaryEl.length) {
-	    $summaryEl = $doc.find("blockquote.userstuff.summary, .summary .userstuff, .summary").first();
-	  }
-	
-	  var summary = $.trim(
-	    $summaryEl
-	      .clone()               // avoid modifying the DOM
-	      .children()
-	      .addBack()             // include text on the blockquote itself
-	      .map(function () {
-	        return $(this).text();
-	      })
-	      .get()
-	      .join(" ")
-	      .replace(/^summary[:\s-]*/i, "")
-	  );
-	
+		var $summaryEl = $doc.find("#workskin .summary blockquote.userstuff").first();
+		
+		if (!$summaryEl.length) {
+		  $summaryEl = $doc.find("blockquote.userstuff.summary, .summary .userstuff, .summary").first();
+		}
+		
+		var $clone = $summaryEl.clone();
+		var $parts = $clone.children().length ? $clone.children() : $clone;
+		
+		var summary = $.trim(
+		  $parts
+		    .map(function () {
+		      return $(this).text();
+		    })
+		    .get()
+		    .join(" ")
+		    .replace(/^summary[:\s-]*/i, "")
+		);
+		
 	  // Embedded media counts + yes/no
 		var imageCount = $doc.find(".userstuff img, .workskin img").length;
 		var hasImages = imageCount > 0 ? "yes" : "no";

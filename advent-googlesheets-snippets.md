@@ -1,9 +1,3 @@
----
-layout: default
-title: Google Sheets Snippets
----
-
-
 # Google Sheets Snippets for K/S Advent & The Terror Advent
 
 These snippets live in a shared Google Sheet and generate ready-to-post snippets for different platforms:

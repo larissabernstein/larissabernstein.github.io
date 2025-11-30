@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Google Sheets Snippets – K/S Advent & The Terror Advent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --ao3-red: #990000;
+      --ao3-light: #f7f3f0;
+      --border: #ddd;
+      --text: #222;
+      --bg: #faf7f6;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2.5rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      max-width: 920px;
+      width: 100%;
+      padding: 2.4rem 2.4rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+      border: 1px solid #e3d7cf;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--ao3-red);
+      margin: 0 0 0.6rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 1.8rem 0 0.6rem;
+      color: #444;
+    }
+
+    p {
+      margin: 0.4rem 0;
+      line-height: 1.55;
+    }
+
+    ul {
+      margin: 0.4rem 0 0.8rem;
+      padding-left: 1.4rem;
+    }
+
+    li {
+      margin: 0.2rem 0;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #e3d7cf;
+      margin: 1.5rem 0;
+    }
+
+    a {
+      color: var(--ao3-red);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.8rem;
+    }
+
+    pre {
+      background: #f5f2ef;
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border: 1px solid #e3d7cf;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.4rem 0 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid #e2d2ca;
+      background: var(--ao3-light);
+      color: var(--ao3-red);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .footer {
+      margin-top: 1.6rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed #e0d0c6;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <h1>Google Sheets Snippets for K/S Advent &amp; The Terror Advent</h1>
+      <p class="meta">
+        Ready-to-post snippet generators for AO3-based advent collections:
+        HTML, Discord, and plain text output from a shared Google Sheet.
+      </p>
+      <div class="badge-row">
+        <span class="badge">ao3</span>
+        <span class="badge">google sheets</span>
+        <span class="badge">k/s advent</span>
+        <span class="badge">the terror advent</span>
+        <span class="badge">mod tools</span>
+      </div>
+      <p>
+        These snippets live in a shared Google Sheet and generate ready-to-post snippets
+        for different platforms:
+      </p>
+      <ul>
+        <li><strong>HTML</strong> – for the daily reveal posts on Tumblr or Dreamwidth</li>
+        <li><strong>Discord</strong> – formatted announcement for the server</li>
+        <li><strong>Plain text</strong> – e.g. for Bluesky</li>
+      </ul>
+      <p>
+        They are designed to work for both <strong>K/S Advent</strong> and
+        <strong>The Terror Advent</strong>.
+      </p>
+    </header>
+
+    <hr />
+
+    <section>
+      <h2>1. Column mapping / expected sheet structure</h2>
+      <p>
+        These formulas assume the following columns (by letter) in the main sheet:
+      </p>
+      <ul>
+        <li><strong>B</strong> – <code>Work Type</code><br />
+          <span class="meta">Values like: <code>fic</code>, <code>poem</code>, <code>filk</code>, <code>drabble</code>, <code>podfic</code>, <code>art</code></span>
+        </li>
+        <li><strong>C</strong> – <code>Title</code></li>
+        <li><strong>E</strong> – <code>Creator</code><br />
+          <span class="meta">Author / artist / podficcer name</span>
+        </li>
+        <li><strong>F</strong> – <code>Link</code><br />
+          <span class="meta">Direct URL to the AO3 work</span>
+        </li>
+        <li><strong>L</strong> – <code>Fandom</code></li>
+        <li><strong>Q</strong> – <code>Rating</code><br />
+          <span class="meta">e.g. General, Teen, Mature, Explicit</span>
+        </li>
+        <li><strong>S</strong> – <code>Words</code><br />
+          <span class="meta">Numeric word count</span>
+        </li>
+        <li><strong>T</strong> – <code>Chapters</code><br />
+          <span class="meta">Either text (e.g. <code>1/1</code>, <code>2/3</code>) or a number</span>
+        </li>
+        <li><strong>U</strong> – <code>Summary</code><br />
+          <span class="meta">Work summary text from AO3</span>
+        </li>
+        <li><strong>V</strong> – <code>Prompter</code> / <code>In response to a prompt by</code><br />
+          <span class="meta">Cleaned name of the prompter (no “For …” prefix, no trailing dot)</span>
+        </li>
+      </ul>
+      <p>
+        If <strong>C2</strong> (Title) is empty, all formulas return an empty string.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. HTML snippet (for the daily reveal)</h2>
+      <p>
+        Used for the reveal posts, producing HTML with a linked title and basic metadata.
+        Words and chapters are only mentioned for fic, drabble, poem, or filk.
+      </p>
+      <pre><code class="language-gsheet">=IF($C2="","",
+  "Title: &lt;strong&gt;&lt;a href='" &amp; $F2 &amp; "' target='_blank'&gt;" &amp; $C2 &amp; "&lt;/a&gt;&lt;/strong&gt;&lt;br&gt;&lt;br&gt;" &amp;
+  IF(LOWER($B2)="art","Artist",
+     IF(LOWER($B2)="podfic","Podficcer","Author")
+  ) &amp; ": &lt;strong&gt;" &amp; $E2 &amp; "&lt;/strong&gt;&lt;br&gt;&lt;br&gt;" &amp;
+  "Fandom: " &amp; $L2 &amp; "&lt;br&gt;" &amp;
+  "Rating: " &amp; $Q2 &amp; "&lt;br&gt;" &amp;
+  IF(OR(LOWER($B2)="fic", LOWER($B2)="poem", LOWER($B2)="filk", LOWER($B2)="drabble"),
+     "Words: " &amp; $S2 &amp; "&lt;br&gt;" &amp;
+     "Chapters: " &amp;
+       IF(ISTEXT($T2), $T2, TEXT($T2,"d/m")) &amp; "&lt;br&gt;",
+     ""
+  ) &amp;
+  "&lt;br&gt;Summary:&lt;br&gt;&lt;br&gt;" &amp;
+  SUBSTITUTE(TO_TEXT($U2), CHAR(10), "&lt;br&gt;") &amp;
+  IF(LEN(TRIM($V2))&gt;0,
+     "&lt;br&gt;&lt;br&gt;In response to a prompt by " &amp;
+     TRIM(
+       REGEXREPLACE(
+         REGEXREPLACE($V2, "^For\s+", ""),
+         "\.$", ""
+       )
+     ) &amp; ".",
+     ""
+  ) &amp;
+  "&lt;br&gt;&lt;br&gt;"
+)</code></pre>
+    </section>
+
+    <section>
+      <h2>3. Discord snippet</h2>
+      <p>
+        Includes a clickable title, Markdown labels, and cleans up broken apostrophes
+        that sometimes appear in copied AO3 summaries.
+      </p>
+      <pre><code class="language-gsheet">=IF($C2="","",
+  TEXTJOIN(CHAR(10)&amp;CHAR(10), TRUE,
+    IF(LOWER($B2)="art",
+       "**Title:** [" &amp; $C2 &amp; "](" &amp; $F2 &amp; ")" &amp; CHAR(10) &amp;
+       "**Artist:** " &amp; $E2,
+    IF(LOWER($B2)="podfic",
+       "**Title:** [" &amp; $C2 &amp; "](" &amp; $F2 &amp; ")" &amp; CHAR(10) &amp;
+       "**Podficcer:** " &amp; $E2,
+       "**Title:** [" &amp; $C2 &amp; "](" &amp; $F2 &amp; ")" &amp; CHAR(10) &amp;
+       "**Author:** " &amp; $E2
+    )),
+    "**Fandom:** " &amp; $L2 &amp; CHAR(10) &amp;
+    "**Rating:** " &amp; $Q2 &amp;
+    IF(OR(LOWER($B2)="art", LOWER($B2)="podfic"),
+       "",
+       CHAR(10) &amp;
+       "**Words:** " &amp; $S2 &amp;
+       IF($T2&lt;&gt;"",
+          CHAR(10) &amp; "**Chapters:** " &amp;
+            IF(ISTEXT($T2), $T2, TEXT($T2,"d/m")),
+          ""
+       )
+    ),
+    IF($U2&lt;&gt;"",
+       "**Summary:**" &amp; CHAR(10) &amp; CHAR(10) &amp;
+         SUBSTITUTE(
+           SUBSTITUTE(
+             SUBSTITUTE($U2,"â€™","'"),
+           "â€œ",""""),
+         "â€",""""),
+       ""
+    ),
+    IF(LEN(TRIM($V2))&gt;0,
+       "In response to a prompt by " &amp;
+       TRIM(
+         REGEXREPLACE(
+           REGEXREPLACE($V2, "^For\s+", ""),
+           "\.$", ""
+         )
+       ) &amp; ".",
+       ""
+    )
+  )
+)</code></pre>
+    </section>
+
+    <section>
+      <h2>4. Plain text snippet</h2>
+      <p>
+        For platforms without HTML or Markdown. Includes a visible URL and cleans up the same
+        broken apostrophes as the Discord version.
+      </p>
+      <pre><code class="language-gsheet">=IF($C2="","",
+  "Title: " &amp; $C2 &amp; CHAR(10) &amp; CHAR(10) &amp;
+  "Link: " &amp; $F2 &amp; CHAR(10) &amp; CHAR(10) &amp;
+  IF(LOWER($B2)="art","Artist",
+     IF(LOWER($B2)="podfic","Podficcer","Author")
+  ) &amp; ": " &amp; $E2 &amp; CHAR(10) &amp; CHAR(10) &amp;
+  "Fandom: " &amp; $L2 &amp; CHAR(10) &amp;
+  "Rating: " &amp; $Q2 &amp;
+  IF(OR(LOWER($B2)="fic", LOWER($B2)="poem", LOWER($B2)="filk", LOWER($B2)="drabble"),
+     CHAR(10) &amp; "Words: " &amp; $S2 &amp;
+     IF($T2&lt;&gt;"",
+        CHAR(10) &amp; "Chapters: " &amp;
+          IF(ISTEXT($T2), $T2, TEXT($T2,"d/m")),
+        ""
+     ),
+     ""
+  ) &amp;
+  CHAR(10) &amp; CHAR(10) &amp;
+  "Summary:" &amp; CHAR(10) &amp; CHAR(10) &amp;
+  SUBSTITUTE(
+    SUBSTITUTE(
+      SUBSTITUTE(TO_TEXT($U2),"â€™","'"),
+    "â€œ",""""),
+  "â€","""") &amp;
+  IF(LEN(TRIM($V2))&gt;0,
+     CHAR(10) &amp; CHAR(10) &amp;
+     "In response to a prompt by " &amp;
+     TRIM(
+       REGEXREPLACE(
+         REGEXREPLACE($V2, "^For\s+", ""),
+         "\.$", ""
+       )
+     ) &amp; ".",
+     ""
+  )
+)</code></pre>
+    </section>
+
+    <section>
+      <h2>5. Reuse across K/S Advent &amp; The Terror Advent</h2>
+      <p>
+        These formulas are intentionally collection-agnostic. They only depend on the sheet’s
+        column structure (<strong>B, C, E, F, L, Q, S, T, U, V</strong>).
+      </p>
+      <p>
+        As long as both K/S Advent and The Terror Advent sheets keep this layout and the same
+        value conventions (work type strings in column B), you can reuse them directly by
+        copying the formulas into the appropriate columns/rows.
+      </p>
+      <p>
+        If the column layout ever changes, update the column letters here and in the live sheet
+        together so everything stays in sync.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. License</h2>
+      <p>
+        Free to reuse for fandom events.<br />
+        Maintained for K/S Advent and The Terror Advent.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <p>
+        This page documents the Google Sheets snippet formulas used to generate reveal and promo
+        posts for K/S Advent and The Terror Advent. Copy the formulas into your own sheet and
+        adjust column letters only if your layout differs.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>

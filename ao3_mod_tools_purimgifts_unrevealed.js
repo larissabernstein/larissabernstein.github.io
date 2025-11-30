@@ -6,12 +6,14 @@
 
   (function ($) {
     var headers = [
-      "Title", "Is Draft", "Creator", "Link", "Recipient", "Posting Date",
-      "creator_status", "collection_status", "unrevealed",
-      "Day Tag", "Has Images", "Has Media",
-      "Fandoms", "Category", "Relationships", "Characters",
-      "Tags", "Rating", "Warnings", "Words", "Chapters", "Summary"
-    ].join(",");
+	  "Title", "Is Draft", "Creator", "Link", "Recipient", "Posting Date",
+	  "creator_status", "collection_status", "unrevealed",
+	  "Day Tag",
+	  "Image Count", "Has Images",
+	  "Media Count", "Has Media",
+	  "Fandoms", "Category", "Relationships", "Characters",
+	  "Tags", "Rating", "Warnings", "Words", "Chapters", "Summary"
+	].join(",");
 
     var spacer = " ";
     var items = [];
@@ -30,96 +32,133 @@
     }
 
     function parseWorkPage(html) {
-      var $doc = $(html);
-
-      var fandoms = $doc.find(".fandoms a, dd.fandom.tags a.tag")
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      var category = $doc.find(".category .tag, dd.category.tags a.tag")
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      var rating = $doc.find(".rating .tag, dd.rating.tags a.tag, .required-tags .rating .text")
-        .first().text().trim();
-
-      var warnings = $doc.find(".tags .warnings a, dd.warning.tags a.tag")
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      var relationships = $doc.find(".tags .relationships a, dd.relationship.tags a.tag")
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      var characters = $doc.find(".tags .characters a, dd.character.tags a.tag")
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      var freeformsElems = $doc.find(".tags .freeforms a, dd.freeform.tags a.tag");
-      var freeforms = freeformsElems
-        .map(function () { return $(this).text(); }).get().join(", ");
-
-      // Day tag: exact match against the four Purimgifts tags
-      var dayTag = "";
-      freeformsElems.each(function () {
-        var t = $(this).text().trim();
-        if (PURIM_DAY_TAGS.indexOf(t) !== -1) {
-          dayTag = t;
-        }
-      });
-
-      var words = $doc.find("dd.words").first().text().replace(/[^\d]/g, "");
-
-      var chapters = '="' + $doc.find("dd.chapters").first().text().trim() + '"';
-
-      var summary = $.trim(
-        $doc.find("blockquote.userstuff.summary, .summary .userstuff, .summary")
-          .first()
-          .children()
-          .map(function () { return $(this).clone().append(spacer); })
-          .text()
-          .replace(/^summary[:\s-]*/i, "")
-      );
-
-      // Embedded media flags
-      var hasImages = $doc.find(".userstuff img, .workskin img").length > 0 ? "yes" : "no";
-
-      var hasMedia = $doc.find(
-        ".userstuff audio, .workskin audio, " +
-        ".userstuff video, .workskin video, " +
-        ".userstuff iframe, .workskin iframe, " +
-        ".userstuff embed, .workskin embed"
-      ).length > 0 ? "yes" : "no";
-
-      return {
-        fandoms: fandoms,
-        category: category,
-        relationships: relationships,
-        characters: characters,
-        tags: freeforms,
-        rating: rating,
-        warnings: warnings,
-        words: words,
-        chapters: chapters,
-        summary: summary,
-        dayTag: dayTag,
-        hasImages: hasImages,
-        hasMedia: hasMedia
-      };
+	  var $doc = $(html);
+	
+	  // Always anchor on the work meta block if present
+	  var $meta = $doc.find("dl.work.meta, dl.work.meta.group").first();
+	  if (!$meta.length) {
+	    // Fallback: some very old/odd layouts, keep old behaviour
+	    $meta = $doc;
+	  }
+	
+	  // Fandoms (Fandom / Fandoms)
+	  var fandoms = $meta.find("dd.fandom.tags a.tag, dd.fandoms.tags a.tag")
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Category
+	  var category = $meta.find("dd.category.tags a.tag")
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Rating
+	  var rating = $meta.find("dd.rating.tags a.tag, .required-tags .rating .text")
+	    .first().text().trim();
+	
+	  // Warnings
+	  var warnings = $meta.find("dd.warning.tags a.tag, .tags .warnings a.tag")
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Relationships
+	  var relationships = $meta.find("dd.relationship.tags a.tag, .tags .relationships a.tag")
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Characters
+	  var characters = $meta.find("dd.character.tags a.tag, .tags .characters a.tag")
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Freeforms / Additional Tags
+	  var freeformsElems = $meta.find("dd.freeform.tags a.tag, .tags .freeforms a.tag");
+	  var freeforms = freeformsElems
+	    .map(function () { return $(this).text(); }).get().join(", ");
+	
+	  // Day tag: exact match against the four Purimgifts tags
+	  var dayTag = "";
+	  freeformsElems.each(function () {
+	    var t = $(this).text().trim();
+	    if (PURIM_DAY_TAGS.indexOf(t) !== -1) {
+	      dayTag = t;
+	    }
+	  });
+	
+	  // Words / Chapters
+	  var words = $meta.find("dd.words").first().text().replace(/[^\d]/g, "");
+	
+	  var chapters = '="' + $meta.find("dd.chapters").first().text().trim() + '"';
+	
+	  // Summary: prefer the summary block inside #workskin, but keep all fallbacks
+	  var $summaryEl = $doc.find("#workskin .summary blockquote.userstuff")
+	    .first();
+	
+	  if (!$summaryEl.length) {
+	    $summaryEl = $doc.find("blockquote.userstuff.summary, .summary .userstuff, .summary").first();
+	  }
+	
+	  var summary = $.trim(
+	    $summaryEl
+	      .clone()               // avoid modifying the DOM
+	      .children()
+	      .addBack()             // include text on the blockquote itself
+	      .map(function () {
+	        return $(this).text();
+	      })
+	      .get()
+	      .join(" ")
+	      .replace(/^summary[:\s-]*/i, "")
+	  );
+	
+	  // Embedded media counts + yes/no
+		var imageCount = $doc.find(".userstuff img, .workskin img").length;
+		var hasImages = imageCount > 0 ? "yes" : "no";
+		
+		var mediaCount = $doc.find(
+		  ".userstuff audio, .workskin audio, " +
+		  ".userstuff video, .workskin video, " +
+		  ".userstuff iframe, .workskin iframe, " +
+		  ".userstuff embed, .workskin embed"
+		).length;
+		var hasMedia = mediaCount > 0 ? "yes" : "no";
+		
+		return {
+		  fandoms: fandoms,
+		  category: category,
+		  relationships: relationships,
+		  characters: characters,
+		  tags: freeforms,
+		  rating: rating,
+		  warnings: warnings,
+		  words: words,
+		  chapters: chapters,
+		  summary: summary,
+		  dayTag: dayTag,
+		  imageCount: imageCount,
+		  hasImages: hasImages,
+		  mediaCount: mediaCount,
+		  hasMedia: hasMedia
+		};
     }
 
     function fetchWorkDetails(item) {
-      // Skip metadata fetch for drafts – mods can't access the work page
-      if (item.isDraft) {
-        console.warn("Skipping metadata fetch for draft:", item.title);
-        return Promise.resolve();
-      }
-
-      return fetch(item.link, { credentials: "include" })
-        .then(function (resp) { return resp.text(); })
-        .then(function (html) {
-          var meta = parseWorkPage(html);
-          Object.assign(item, meta);
-        })
-        .catch(function (err) {
-          console.error("Error fetching", item.link, err);
-        });
-    }
+	  // Skip metadata fetch for drafts – mods can't access the work page
+	  if (item.isDraft) {
+	    console.warn("Skipping metadata fetch for draft:", item.title);
+	    return Promise.resolve();
+	  }
+	
+	  // Force "Entire Work" view so we see media in *all* chapters
+	  var url = item.link;
+	  if (url.indexOf("view_full_work=") === -1) {
+	    url += (url.indexOf("?") === -1 ? "?" : "&") + "view_full_work=true";
+	  }
+	
+	  return fetch(url, { credentials: "include" })
+	    .then(function (resp) { return resp.text(); })
+	    .then(function (html) {
+	      var meta = parseWorkPage(html);
+	      Object.assign(item, meta);
+	    })
+	    .catch(function (err) {
+	      console.error("Error fetching", url, err);
+	    });
+	}
 
     function collectItemsFromDoc($doc) {
       $doc.find("li.collection.item.picture.blurb.group").each(function () {
@@ -153,29 +192,31 @@
           : "revealed";
 
         items.push({
-          title: title,
-          isDraft: isDraft,
-          author: author,
-          link: link,
-          recipient: recipient,
-          date: date,
-          creator_status: creator_status,
-          collection_status: collection_status,
-          unrevealed: unrevealed,
-          dayTag: "",
-          hasImages: "",
-          hasMedia: "",
-          fandoms: "",
-          category: "",
-          relationships: "",
-          characters: "",
-          tags: "",
-          rating: "",
-          warnings: "",
-          words: "",
-          chapters: "",
-          summary: ""
-        });
+		  title: title,
+		  isDraft: isDraft,
+		  author: author,
+		  link: link,
+		  recipient: recipient,
+		  date: date,
+		  creator_status: creator_status,
+		  collection_status: collection_status,
+		  unrevealed: unrevealed,
+		  dayTag: "",
+		  imageCount: 0,
+		  hasImages: "no",
+		  mediaCount: 0,
+		  hasMedia: "no",
+		  fandoms: "",
+		  category: "",
+		  relationships: "",
+		  characters: "",
+		  tags: "",
+		  rating: "",
+		  warnings: "",
+		  words: "",
+		  chapters: "",
+		  summary: ""
+		});
       });
     }
 
@@ -217,29 +258,31 @@
         var output = headers + "\r\n";
         items.forEach(function (it) {
           var fields = [
-            it.title,
-            it.isDraft ? "yes" : "",
-            it.author,
-            it.link,
-            it.recipient,
-            it.date,
-            it.creator_status,
-            it.collection_status,
-            it.unrevealed,
-            it.dayTag,
-            it.hasImages,
-            it.hasMedia,
-            it.fandoms,
-            it.category,
-            it.relationships,
-            it.characters,
-            it.tags,
-            it.rating,
-            it.warnings,
-            it.words,
-            it.chapters,
-            it.summary
-          ].map(csvEscape);
+			  it.title,
+			  it.isDraft ? "yes" : "",
+			  it.author,
+			  it.link,
+			  it.recipient,
+			  it.date,
+			  it.creator_status,
+			  it.collection_status,
+			  it.unrevealed,
+			  it.dayTag,
+			  it.imageCount,
+			  it.hasImages,
+			  it.mediaCount,
+			  it.hasMedia,
+			  it.fandoms,
+			  it.category,
+			  it.relationships,
+			  it.characters,
+			  it.tags,
+			  it.rating,
+			  it.warnings,
+			  it.words,
+			  it.chapters,
+			  it.summary
+			].map(csvEscape);
 
           output += fields.join(",") + "\r\n";
         });

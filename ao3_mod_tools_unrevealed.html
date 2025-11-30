@@ -110,6 +110,13 @@
       font-size: 0.8rem;
       color: #777;
     }
+    ul {
+      margin: 0.25rem 0 0.8rem;
+      padding-left: 1.2rem;
+    }
+    ul li {
+      margin: 0.15rem 0;
+    }
   </style>
 </head>
 <body>
@@ -117,10 +124,58 @@
     <span class="badge">AO3 Collection Moderator Tool</span>
     <h1>Unrevealed Multi-page Export</h1>
     <p>
-      Export all <strong>Approved</strong> items from the AO3 collection moderator
-      “Manage Items” view – even across multiple pages – including creator,
-      recipient, statuses, and full work metadata.
+      This bookmarklet helps collection moderators export all <strong>Approved</strong> items
+      from the AO3 “Manage Items” view into a single CSV file – even if there are
+      many pages of items.
     </p>
+    <p>
+      It walks through all pages of the Approved tab and, for non-draft works,
+      also visits each work page to fetch fandom, tags, rating, and other details.
+      You can then open the CSV in Excel, Google Sheets, or LibreOffice to plan
+      reveals, check assignments, or do any other modly spreadsheets you need.
+    </p>
+
+    <h2>What this script actually does</h2>
+    <p>For every item listed in <strong>Manage Items → Approved</strong>, the export will include:</p>
+    <ul>
+      <li><strong>Title</strong> – exactly as shown in the Approved list (including “(Draft)” if present)</li>
+      <li><strong>Is Draft</strong> – <code>yes</code> if the title ends with <code>(Draft)</code>, otherwise empty</li>
+      <li><strong>Creator</strong> – the name shown in the header line (without the “for &lt;recipient&gt;” part)</li>
+      <li><strong>Link</strong> – direct link to the work on AO3</li>
+      <li><strong>Recipient</strong> – the giftee / recipient, if present</li>
+      <li><strong>Posting Date</strong> – the date shown in the Approved list</li>
+      <li><strong>creator_status</strong> – e.g. “Approved by creator”</li>
+      <li><strong>collection_status</strong> – e.g. “Approved by collection moderators”</li>
+      <li><strong>unrevealed</strong> – <code>unrevealed</code> if the checkbox is ticked, otherwise <code>revealed</code></li>
+      <li><strong>Fandoms</strong> – all fandom tags from the work page</li>
+      <li><strong>Category</strong> – Gen / F/M / M/M / F/F etc.</li>
+      <li><strong>Relationships</strong></li>
+      <li><strong>Characters</strong></li>
+      <li><strong>Tags</strong> – the additional tags / freeforms</li>
+      <li><strong>Rating</strong></li>
+      <li><strong>Warnings</strong></li>
+      <li><strong>Words</strong></li>
+      <li><strong>Chapters</strong> – preserved with the current <code>="current/total"</code> style</li>
+      <li><strong>Summary</strong> – the work summary text (without an extra “Summary:” prefix)</li>
+    </ul>
+    <p class="note">
+      This export deliberately does <em>not</em> include kudos, comments, bookmarks, or hits.
+      For unrevealed items, those numbers are not meaningful yet; you can run a different
+      export later after reveals.
+    </p>
+
+    <h2>Drafts and weird AO3 behaviour</h2>
+    <p>
+      Drafts on AO3 can show up in the collection “Manage Items” view even when you,
+      as a mod, can’t actually load the work page. These are identified by
+      AO3 with <code>(Draft)</code> at the end of the title.
+    </p>
+    <ul>
+      <li>The script marks such entries with <strong>Is Draft = yes</strong>.</li>
+      <li>For drafts, it <strong>does not try to fetch work-page metadata</strong> (fandoms, tags, etc.).</li>
+      <li>This prevents accidentally pulling in wrong or error-page data.</li>
+      <li>Drafts may appear multiple times if an author saves several drafts; the CSV will reflect that, so you can deduplicate or track them as needed.</li>
+    </ul>
 
     <h2>Drag-and-drop bookmarklet</h2>
     <p>Drag this button to your bookmarks bar:</p>
@@ -144,7 +199,7 @@
       <li>Click the <strong>Approved</strong> tab (with the status dropdowns &amp; unrevealed checkboxes).</li>
       <li>Make sure you are on <strong>page&nbsp;1</strong> of the Approved list.</li>
       <li>Click the <em>AO3 Unrevealed – All Pages CSV</em> bookmarklet.</li>
-      <li>Wait while it walks through all pages and work pages; when finished, a CSV will download as<br>
+      <li>Wait while it walks through all pages and non-draft work pages; when finished, a CSV will download as<br>
         <code>ao3_mod_unrevealed_work_info_all_pages.csv</code>.
       </li>
     </ol>
@@ -169,9 +224,12 @@ javascript:(function(){var s=document.createElement('script');s.src='https://lar
     </p>
 
     <div class="footer">
-      Version 1.0 – exports: Title, Creator, Link, Recipient, Posting Date, creator_status,
-      collection_status, unrevealed flag, Fandoms, Category, Relationships, Characters,
-      Tags, Rating, Warnings, Words, Chapters, Summary (no kudos/comments/bookmarks/hits).
+      Version 1.1 – draft-aware unrevealed export.<br>
+      Exports columns: Title, Is Draft, Creator, Link, Recipient, Posting Date,
+      creator_status, collection_status, unrevealed, Fandoms, Category,
+      Relationships, Characters, Tags (freeforms), Rating, Warnings, Words,
+      Chapters, Summary (no kudos/comments/bookmarks/hits).<br>
+      Created by Dr. Larissa Bernstein.
     </div>
   </main>
 </body>

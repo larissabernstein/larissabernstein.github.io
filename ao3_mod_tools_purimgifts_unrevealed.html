@@ -110,6 +110,13 @@
       font-size: 0.8rem;
       color: #777;
     }
+    ul {
+      margin: 0.25rem 0 0.8rem;
+      padding-left: 1.2rem;
+    }
+    ul li {
+      margin: 0.15rem 0;
+    }
   </style>
 </head>
 <body>
@@ -117,10 +124,73 @@
     <span class="badge">AO3 Collection Moderator Tool</span>
     <h1>Purimgifts – Unrevealed Multi-page Export</h1>
     <p>
-      Export all <strong>Approved</strong> items from a Purimgifts collection’s
-      moderator “Manage Items” view – including creator, giftee, day tags, and
-      embedded media flags – across all pages.
+      This bookmarklet helps Purimgifts moderators export all <strong>Approved</strong> items
+      from the AO3 “Manage Items” view into a single CSV file – even if the Approved
+      list spans several pages.
     </p>
+    <p>
+      It walks through all pages of the Approved tab and, for non-draft works,
+      also visits each work page to fetch fandoms, tags, day tags, and information
+      about embedded images or media. You can open the CSV in Excel, Google Sheets,
+      or LibreOffice to plan reveals and scheduling.
+    </p>
+
+    <h2>What this script actually does</h2>
+    <p>For every item listed in <strong>Manage Items → Approved</strong>, the export includes:</p>
+    <ul>
+      <li><strong>Title</strong> – exactly as shown in the Approved list (including “(Draft)” if present)</li>
+      <li><strong>Is Draft</strong> – <code>yes</code> if the title ends with <code>(Draft)</code>, otherwise empty</li>
+      <li><strong>Creator</strong> – the name shown in the header (without the “for &lt;recipient&gt;” part)</li>
+      <li><strong>Link</strong> – direct link to the work on AO3</li>
+      <li><strong>Recipient</strong> – the giftee / recipient (“for &lt;user&gt;”), if present</li>
+      <li><strong>Posting Date</strong> – the date shown in the Approved list</li>
+      <li><strong>creator_status</strong> – e.g. “Approved by creator”</li>
+      <li><strong>collection_status</strong> – e.g. “Approved by collection moderators”</li>
+      <li><strong>unrevealed</strong> – <code>unrevealed</code> if the checkbox is ticked, otherwise <code>revealed</code></li>
+      <li><strong>Day Tag</strong> – one of the Purimgifts day tags, if present:
+        <ul>
+          <li><code>Collection: Purimgifts Day 1</code></li>
+          <li><code>Collection: Purimgifts Day 2</code></li>
+          <li><code>Collection: Purimgifts Day 3</code></li>
+          <li><code>Collection: Purimgifts Extras</code></li>
+        </ul>
+        If none of these are present among the additional tags, this column is left blank.
+      </li>
+      <li><strong>Has Images</strong> – <code>yes</code> if the work content contains <code>&lt;img&gt;</code> tags (e.g. fanart, image-heavy fic); otherwise <code>no</code></li>
+      <li><strong>Has Media</strong> – <code>yes</code> if the work content contains audio/video/embedded media
+        (<code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;iframe&gt;</code>, <code>&lt;embed&gt;</code>), e.g. podfics or embedded players</li>
+      <li><strong>Fandoms</strong> – all fandom tags from the work page</li>
+      <li><strong>Category</strong> – Gen / F/M / M/M / F/F etc.</li>
+      <li><strong>Relationships</strong></li>
+      <li><strong>Characters</strong></li>
+      <li><strong>Tags</strong> – the additional tags / freeforms (including the day tag, even though it is also broken out separately)</li>
+      <li><strong>Rating</strong></li>
+      <li><strong>Warnings</strong></li>
+      <li><strong>Words</strong></li>
+      <li><strong>Chapters</strong> – preserved in the current <code>="current/total"</code> format</li>
+      <li><strong>Summary</strong> – the work summary text (without an extra “Summary:” prefix)</li>
+    </ul>
+    <p class="note">
+      The day tag is pulled specifically from the freeform/additional tags. The script looks
+      for an exact match to the four Purimgifts collection day tags listed above and copies
+      the matching one into the <strong>Day Tag</strong> column.
+    </p>
+    <p class="note">
+      You can also safely run this on other collections. On non-Purimgifts collections the
+      <strong>Day Tag</strong> column will simply stay empty.
+    </p>
+
+    <h2>Drafts and AO3 quirks</h2>
+    <p>
+      AO3 can show saved drafts in the collection “Manage Items” view, with <code>(Draft)</code>
+      at the end of the title, even when the full work page is not accessible to moderators.
+    </p>
+    <ul>
+      <li>The script marks such entries with <strong>Is Draft = yes</strong>.</li>
+      <li>For drafts, it <strong>does not attempt to fetch work-page metadata</strong> (fandoms, tags, day tag, media flags, etc.).</li>
+      <li>This avoids pulling in incorrect data from error pages or unrelated works.</li>
+      <li>If an author saves several drafts, they might appear multiple times; the CSV will show each occurrence so you can track or deduplicate as needed.</li>
+    </ul>
 
     <h2>Drag-and-drop bookmarklet</h2>
     <p>Drag this button to your bookmarks bar:</p>
@@ -141,10 +211,10 @@
     <h2>How to use on AO3</h2>
     <ol>
       <li>Log in to AO3 and go to the Purimgifts collection’s <strong>Manage Items</strong> page.</li>
-      <li>Click the <strong>Approved</strong> tab (with the status dropdowns &amp; unrevealed checkboxes).</li>
+      <li>Click the <strong>Approved</strong> tab (the one with status dropdowns &amp; unrevealed checkboxes).</li>
       <li>Make sure you are on <strong>page&nbsp;1</strong> of the Approved list.</li>
       <li>Click the <em>AO3 Purimgifts – Unrevealed CSV</em> bookmarklet.</li>
-      <li>Wait while it walks through all pages and work pages; when finished, a CSV will download as<br>
+      <li>Wait while it walks through all pages and (for non-drafts) the work pages; when finished, a CSV will download as<br>
         <code>ao3_purimgifts_unrevealed_all_pages.csv</code>.
       </li>
     </ol>
@@ -169,13 +239,15 @@ javascript:(function(){var s=document.createElement('script');s.src='https://lar
     </p>
 
     <div class="footer">
-      Version 1.0 – Purimgifts export. Columns: Title, Creator, Link, Recipient,
-      Posting Date, creator_status, collection_status, unrevealed, Day Tag,
-      Has Images, Has Media, Fandoms, Category, Relationships, Characters,
-      Tags, Rating, Warnings, Words, Chapters, Summary.
-      Day Tag values are matched against:
+      Version 1.1 – Purimgifts draft-aware unrevealed export.<br>
+      Exports columns: Title, Is Draft, Creator, Link, Recipient, Posting Date,
+      creator_status, collection_status, unrevealed, Day Tag, Has Images,
+      Has Media, Fandoms, Category, Relationships, Characters, Tags (freeforms),
+      Rating, Warnings, Words, Chapters, Summary.<br>
+      Day Tag is taken from the additional tags if it matches one of:
       “Collection: Purimgifts Day 1”, “Collection: Purimgifts Day 2”,
-      “Collection: Purimgifts Day 3”, “Collection: Purimgifts Extras”.
+      “Collection: Purimgifts Day 3”, “Collection: Purimgifts Extras”.<br>
+      Created by Dr. Larissa Bernstein.
     </div>
   </main>
 </body>

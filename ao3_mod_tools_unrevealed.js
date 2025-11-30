@@ -6,7 +6,7 @@
 
   (function ($) {
     var headers = [
-      "Title", "Creator", "Link", "Recipient", "Posting Date",
+      "Title", "Is Draft", "Creator", "Link", "Recipient", "Posting Date",
       "creator_status", "collection_status", "unrevealed",
       "Fandoms", "Category", "Relationships", "Characters",
       "Tags", "Rating", "Warnings", "Words", "Chapters", "Summary"
@@ -73,6 +73,12 @@
     }
 
     function fetchWorkDetails(item) {
+      // Skip metadata fetch for drafts – mods can't access the work page
+      if (item.isDraft) {
+        console.warn("Skipping metadata fetch for draft:", item.title);
+        return Promise.resolve();
+      }
+
       return fetch(item.link, { credentials: "include" })
         .then(function (resp) { return resp.text(); })
         .then(function (html) {
@@ -89,7 +95,13 @@
         var $li = $(this);
 
         var $titleLink = $li.find("> .header.module h4.heading a");
-        var title = $titleLink.text().trim();
+        var rawTitle = $titleLink.text().trim();
+
+        // Drafts: titles ending in "(Draft)"
+        var isDraft = /\(Draft\)\s*$/.test(rawTitle);
+
+        // Keep title exactly as AO3 shows it (including "(Draft)")
+        var title = rawTitle;
         var link = "https://archiveofourown.org" + $titleLink.attr("href");
 
         var $h5 = $li.find("> .header.module h5.heading").first();
@@ -111,6 +123,7 @@
 
         items.push({
           title: title,
+          isDraft: isDraft,
           author: author,
           link: link,
           recipient: recipient,
@@ -171,6 +184,7 @@
         items.forEach(function (it) {
           var fields = [
             it.title,
+            it.isDraft ? "yes" : "",
             it.author,
             it.link,
             it.recipient,

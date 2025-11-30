@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AO3 Mod Tools – Unrevealed Multi-page Export</title>
+  <style>
+    :root {
+      --ao3-red: #990000;
+      --ao3-light: #f7f3f0;
+      --border: #ddd;
+      --text: #222;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      background: #faf7f6;
+      color: var(--text);
+      margin: 0;
+      padding: 2.5rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      max-width: 840px;
+      width: 100%;
+      padding: 2rem 2.2rem;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border: 1px solid #e3d7cf;
+    }
+    h1 {
+      font-size: 1.7rem;
+      color: var(--ao3-red);
+      margin: 0 0 0.6rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin: 1.4rem 0 0.4rem;
+      color: #444;
+    }
+    p {
+      margin: 0.3rem 0;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--ao3-light);
+      color: var(--ao3-red);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid #e2d2ca;
+      margin-bottom: 0.6rem;
+    }
+    .bookmarklet {
+      display: inline-block;
+      margin: 0.8rem 0 1.2rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 999px;
+      background: var(--ao3-red);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 1px solid #5f0000;
+      box-shadow: 0 4px 10px rgba(153,0,0,0.25);
+      cursor: grab;
+    }
+    .bookmarklet:hover {
+      background: #b30000;
+    }
+    .bookmarklet:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(153,0,0,0.3);
+      cursor: grabbing;
+    }
+    ol {
+      padding-left: 1.2rem;
+      margin: 0.25rem 0 0.8rem;
+    }
+    li { margin: 0.15rem 0; }
+    code {
+      background: #f5f2ef;
+      padding: 0.1rem 0.25rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    textarea {
+      width: 100%;
+      height: 7rem;
+      margin-top: 0.4rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      padding: 0.45rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fdfaf8;
+      resize: vertical;
+    }
+    .note {
+      font-size: 0.85rem;
+      color: #555;
+    }
+    .footer {
+      margin-top: 1.4rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed #e0d0c6;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="badge">AO3 Collection Moderator Tool</span>
+    <h1>Unrevealed Multi-page Export</h1>
+    <p>
+      Export all <strong>Approved</strong> items from the AO3 collection moderator
+      “Manage Items” view – even across multiple pages – including creator,
+      recipient, statuses, and full work metadata.
+    </p>
+
+    <h2>Drag-and-drop bookmarklet</h2>
+    <p>Drag this button to your bookmarks bar:</p>
+
+    <!-- SHORT LOADER BOOKMARKLET -->
+    <p>
+      <a class="bookmarklet"
+         href="javascript:(function(){var s=document.createElement('script');s.src='https://larissabernstein.github.io/ao3_mod_tools_unrevealed.js?'+Date.now();document.body.appendChild(s);}());">
+        AO3 Unrevealed – All Pages CSV
+      </a>
+    </p>
+
+    <p class="note">
+      When clicked on AO3, this bookmarklet loads the latest version of the
+      export script from this site and downloads a CSV file.
+    </p>
+
+    <h2>How to use on AO3</h2>
+    <ol>
+      <li>Log in to AO3 and go to your collection’s <strong>Manage Items</strong> page.</li>
+      <li>Click the <strong>Approved</strong> tab (with the status dropdowns &amp; unrevealed checkboxes).</li>
+      <li>Make sure you are on <strong>page&nbsp;1</strong> of the Approved list.</li>
+      <li>Click the <em>AO3 Unrevealed – All Pages CSV</em> bookmarklet.</li>
+      <li>Wait while it walks through all pages and work pages; when finished, a CSV will download as<br>
+        <code>ao3_mod_unrevealed_work_info_all_pages.csv</code>.
+      </li>
+    </ol>
+
+    <h2>If dragging doesn’t work (Safari fallback)</h2>
+    <p>
+      If clicking the bookmark on AO3 does nothing, Safari may have mangled the code.
+      In that case:
+    </p>
+    <ol>
+      <li>Create a new bookmark (e.g. name it <code>AO3 Unrevealed – All Pages CSV</code>).</li>
+      <li>Open <strong>Bookmarks → Edit Bookmarks</strong> and select the bookmark.</li>
+      <li>Paste this into the URL / Address field and press Enter:</li>
+    </ol>
+
+    <textarea readonly>
+javascript:(function(){var s=document.createElement('script');s.src='https://larissabernstein.github.io/ao3_mod_tools_unrevealed.js?'+Date.now();document.body.appendChild(s);}());
+    </textarea>
+
+    <p class="note">
+      After that, use the bookmark on AO3 as described above.
+    </p>
+
+    <div class="footer">
+      Version 1.0 – exports: Title, Creator, Link, Recipient, Posting Date, creator_status,
+      collection_status, unrevealed flag, Fandoms, Category, Relationships, Characters,
+      Tags, Rating, Warnings, Words, Chapters, Summary (no kudos/comments/bookmarks/hits).
+    </div>
+  </main>
+</body>
+</html>

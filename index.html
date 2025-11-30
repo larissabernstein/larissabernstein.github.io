@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Larissa Bernstein – Fandom & Code</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --ao3-red: #990000;
+      --ao3-light: #f7f3f0;
+      --border: #ddd;
+      --text: #222;
+      --bg: #faf7f6;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2.5rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      max-width: 920px;
+      width: 100%;
+      padding: 2.4rem 2.4rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+      border: 1px solid #e3d7cf;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--ao3-red);
+      margin: 0 0 0.4rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 1.6rem 0 0.6rem;
+      color: #444;
+    }
+
+    p {
+      margin: 0.4rem 0;
+      line-height: 1.5;
+    }
+
+    .tagline {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 0.8rem;
+    }
+
+    .chips {
+      margin: 0.4rem 0 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #e2d2ca;
+      background: var(--ao3-light);
+      color: var(--ao3-red);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .sections {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: 2rem;
+      margin-top: 0.8rem;
+    }
+
+    @media (max-width: 720px) {
+      .sections {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .intro-block p {
+      margin-bottom: 0.3rem;
+    }
+
+    ul.links {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.4rem 0 0.8rem;
+    }
+
+    ul.links li {
+      margin: 0.25rem 0;
+    }
+
+    a {
+      color: var(--ao3-red);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    code {
+      background: #f5f2ef;
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .footer {
+      margin-top: 1.6rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed #e0d0c6;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <h1>Larissa Bernstein</h1>
+      <p class="tagline">
+        vidder, writer, con and event organiser, zine librarian, archivist, VJ, nerd.
+      </p>
+      <div class="chips">
+        <span class="chip">fandom</span>
+        <span class="chip">events</span>
+        <span class="chip">archives</span>
+        <span class="chip">vids</span>
+        <span class="chip">fic</span>
+        <span class="chip">zines</span>
+        <span class="chip">code for science</span>
+        <span class="chip">code for fandom</span>
+      </div>
+    </header>
+
+    <section class="sections">
+      <div class="intro-block">
+        <h2>About</h2>
+        <p>
+          I make things and help keep things around: vids, fic, zines, conventions, online
+          events, and the archives that hold them together.
+        </p>
+        <p>
+          By day I write and wrangle code for research and data. By night I point that same
+          energy at fandom &mdash; organising events, maintaining fandom infrastructure, and
+          building small tools that make moderators' lives easier.
+        </p>
+        <p>
+          This site is a landing page for those tools and projects.
+        </p>
+      </div>
+
+      <aside>
+        <h2>Tools &amp; Projects</h2>
+        <ul class="links">
+          <li>
+            <a href="ao3_mod_tools_unrevealed.html">
+              AO3 Mod Tools &mdash; Unrevealed Multi-page Export (Advent)
+            </a>
+          </li>
+          <li>
+            <a href="ao3_mod_tools_purimgifts_unrevealed.html">
+              AO3 Mod Tools &mdash; Purimgifts Unrevealed Export
+            </a>
+          </li>
+          <!--
+          Add more links here as you publish more pages, for example:
+          <li><a href="some_other_project.html">Some Other Project</a></li>
+          -->
+        </ul>
+
+        <h2>Code &amp; repos</h2>
+        <p>
+          You can find the source code for these tools and other experiments on
+          <a href="https://github.com/larissabernstein">GitHub</a>.
+        </p>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <p>
+        Hosted on GitHub Pages at
+        <code>larissabernstein.github.io</code>.
+        Built for fandom, science, and the places where they overlap.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>

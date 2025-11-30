@@ -59,19 +59,32 @@
           .replace(/^summary[:\s-]*/i, "")
       );
 
-      // Try to extract the prompter pseud (or fallback to full line)
+      // Get the prompter:
+      // We look through ALL association <li> entries and ONLY use the one
+      // that contains "In response to a" and "prompt". This avoids "For X."
+      // gift lines and grabs just the prompt credit.
       var prompter = "";
-      var $assocLi = $doc.find(".notes .associations li").first();
-      if ($assocLi.length) {
-        var $links = $assocLi.find("a");
-        if ($links.length >= 2) {
-          // first link = prompt, second link = prompter pseud, third = collection
-          prompter = $.trim($links.eq(1).text());
-        } else {
-          // fallback: full association line collapsed
-          prompter = $.trim($assocLi.text().replace(/\s+/g, " "));
+      var $assocLis = $doc.find(".notes .associations li");
+
+      $assocLis.each(function () {
+        var $li = $(this);
+        var text = $li.text();
+
+        // match AO3's standard wording, case-insensitive
+        if (/in response to a/i.test(text) && /prompt/i.test(text)) {
+          var $links = $li.find("a");
+          if ($links.length >= 2) {
+            // typical structure:
+            // "In response to a <a>prompt</a> by <a>PROMPTER</a> in the <a>collection</a>"
+            prompter = $.trim($links.eq(1).text());
+          } else {
+            // fallback: if AO3 ever changes wording, keep something useful
+            prompter = $.trim(text.replace(/\s+/g, " "));
+          }
+          return false; // break out of .each()
         }
-      }
+      });
+      // --- end prompter logic ---
 
       return {
         fandoms: fandoms,

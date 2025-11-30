@@ -2,7 +2,7 @@
 
 These snippets live in a shared Google Sheet and generate ready-to-post snippets for different platforms:
 
-- **HTML** – for the daily reveal posts o Tumblr or Dreamwidth
+- **HTML** – for the daily reveal posts to Tumblr or Dreamwidth
 - **Discord** – formatted announcement for the server  
 - **Plain text** – e.g. for Bluesky
 

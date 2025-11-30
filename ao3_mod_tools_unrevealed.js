@@ -9,7 +9,8 @@
       "Title", "Is Draft", "Creator", "Link", "Recipient", "Posting Date",
       "creator_status", "collection_status", "unrevealed",
       "Fandoms", "Category", "Relationships", "Characters",
-      "Tags", "Rating", "Warnings", "Words", "Chapters", "Summary"
+      "Tags", "Rating", "Warnings", "Words", "Chapters", "Summary",
+      "Prompter"
     ].join(",");
 
     var spacer = " ";
@@ -58,6 +59,20 @@
           .replace(/^summary[:\s-]*/i, "")
       );
 
+      // Try to extract the prompter pseud (or fallback to full line)
+      var prompter = "";
+      var $assocLi = $doc.find(".notes .associations li").first();
+      if ($assocLi.length) {
+        var $links = $assocLi.find("a");
+        if ($links.length >= 2) {
+          // first link = prompt, second link = prompter pseud, third = collection
+          prompter = $.trim($links.eq(1).text());
+        } else {
+          // fallback: full association line collapsed
+          prompter = $.trim($assocLi.text().replace(/\s+/g, " "));
+        }
+      }
+
       return {
         fandoms: fandoms,
         category: category,
@@ -68,7 +83,8 @@
         warnings: warnings,
         words: words,
         chapters: chapters,
-        summary: summary
+        summary: summary,
+        prompter: prompter
       };
     }
 
@@ -140,7 +156,8 @@
           warnings: "",
           words: "",
           chapters: "",
-          summary: ""
+          summary: "",
+          prompter: ""
         });
       });
     }
@@ -201,7 +218,8 @@
             it.warnings,
             it.words,
             it.chapters,
-            it.summary
+            it.summary,
+            it.prompter
           ].map(csvEscape);
 
           output += fields.join(",") + "\r\n";

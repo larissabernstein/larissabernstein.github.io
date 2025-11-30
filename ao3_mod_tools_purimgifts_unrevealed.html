@@ -130,8 +130,9 @@
     </p>
     <p>
       It walks through all pages of the Approved tab and, for non-draft works,
-      also visits each work page to fetch fandoms, tags, day tags, and information
-      about embedded images or media. You can open the CSV in Excel, Google Sheets,
+      also visits each work page in <strong>“Entire Work” view</strong> to fetch fandoms,
+      tags, day tags, summary text, and detailed information about embedded images
+      or media (including counts). You can open the CSV in Excel, Google Sheets,
       or LibreOffice to plan reveals and scheduling.
     </p>
 
@@ -156,9 +157,13 @@
         </ul>
         If none of these are present among the additional tags, this column is left blank.
       </li>
-      <li><strong>Has Images</strong> – <code>yes</code> if the work content contains <code>&lt;img&gt;</code> tags (e.g. fanart, image-heavy fic); otherwise <code>no</code></li>
-      <li><strong>Has Media</strong> – <code>yes</code> if the work content contains audio/video/embedded media
-        (<code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;iframe&gt;</code>, <code>&lt;embed&gt;</code>), e.g. podfics or embedded players</li>
+      <li><strong>Image Count</strong> – the total number of <code>&lt;img&gt;</code> tags in the work content
+        (counted in “Entire Work” view across all chapters)</li>
+      <li><strong>Has Images</strong> – <code>yes</code> if <strong>Image Count &gt; 0</strong>, otherwise <code>no</code></li>
+      <li><strong>Media Count</strong> – the total number of embedded media elements in the work content
+        (<code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;iframe&gt;</code>, <code>&lt;embed&gt;</code>,
+        again in “Entire Work” view across all chapters)</li>
+      <li><strong>Has Media</strong> – <code>yes</code> if <strong>Media Count &gt; 0</strong>, otherwise <code>no</code></li>
       <li><strong>Fandoms</strong> – all fandom tags from the work page</li>
       <li><strong>Category</strong> – Gen / F/M / M/M / F/F etc.</li>
       <li><strong>Relationships</strong></li>
@@ -187,7 +192,7 @@
     </p>
     <ul>
       <li>The script marks such entries with <strong>Is Draft = yes</strong>.</li>
-      <li>For drafts, it <strong>does not attempt to fetch work-page metadata</strong> (fandoms, tags, day tag, media flags, etc.).</li>
+      <li>For drafts, it <strong>does not attempt to fetch work-page metadata</strong> (fandoms, tags, day tag, media counts/flags, etc.).</li>
       <li>This avoids pulling in incorrect data from error pages or unrelated works.</li>
       <li>If an author saves several drafts, they might appear multiple times; the CSV will show each occurrence so you can track or deduplicate as needed.</li>
     </ul>
@@ -214,7 +219,8 @@
       <li>Click the <strong>Approved</strong> tab (the one with status dropdowns &amp; unrevealed checkboxes).</li>
       <li>Make sure you are on <strong>page&nbsp;1</strong> of the Approved list.</li>
       <li>Click the <em>AO3 Purimgifts – Unrevealed CSV</em> bookmarklet.</li>
-      <li>Wait while it walks through all pages and (for non-drafts) the work pages; when finished, a CSV will download as<br>
+      <li>Wait while it walks through all pages and (for non-drafts) the work pages in “Entire Work” view;
+        when finished, a CSV will download as<br>
         <code>ao3_purimgifts_unrevealed_all_pages.csv</code>.
       </li>
     </ol>
@@ -239,11 +245,11 @@ javascript:(function(){var s=document.createElement('script');s.src='https://lar
     </p>
 
     <div class="footer">
-      Version 1.1 – Purimgifts draft-aware unrevealed export.<br>
+      Version 1.2 – Purimgifts draft-aware unrevealed export with image/media counts.<br>
       Exports columns: Title, Is Draft, Creator, Link, Recipient, Posting Date,
-      creator_status, collection_status, unrevealed, Day Tag, Has Images,
-      Has Media, Fandoms, Category, Relationships, Characters, Tags (freeforms),
-      Rating, Warnings, Words, Chapters, Summary.<br>
+      creator_status, collection_status, unrevealed, Day Tag, Image Count, Has Images,
+      Media Count, Has Media, Fandoms, Category, Relationships, Characters,
+      Tags (freeforms), Rating, Warnings, Words, Chapters, Summary.<br>
       Day Tag is taken from the additional tags if it matches one of:
       “Collection: Purimgifts Day 1”, “Collection: Purimgifts Day 2”,
       “Collection: Purimgifts Day 3”, “Collection: Purimgifts Extras”.<br>
